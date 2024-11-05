@@ -28,7 +28,6 @@ class UserServiceImpl implements UserService
     {
         try {
             $cacheKey = 'users.' . md5(serialize($userFilter->filters()));
-            info("key $cacheKey");
             $cacheTTL = 60;
 
             $users = Cache::remember($cacheKey, $cacheTTL, function () use ($userFilter, $page) {
@@ -51,7 +50,6 @@ class UserServiceImpl implements UserService
             $user = Cache::remember($cacheKey, $cacheTTL, function () use ($id) {
                 return $this->userRepository->getOneUser($id);
             })->first();
-            info("single user info", [$user]);
             ProfileViewedEvent::dispatch(auth()->id());
             return response()->json($user->toDto(), 200);
         } catch (\Exception $e) {
@@ -101,7 +99,6 @@ class UserServiceImpl implements UserService
     private function hasOtherUserWithEmail(string $userId, string $email): bool
     {
         $userEmail = $this->userRepository->getOneUser($userId)?->email;
-        info("email compare ", [$userId, $userEmail, $email]);
         $isNewEmail = $userEmail !== $email;
         return $isNewEmail && $this->userRepository->findUserByEmail($email)->count() > 0;
     }

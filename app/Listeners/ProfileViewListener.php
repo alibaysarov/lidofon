@@ -24,6 +24,5 @@ class ProfileViewListener
     public function handle(ProfileViewedEvent $event): void
     {
         $this->historyRepositoryImpl->addToHistory($event->viewerId, $event->type);
-        info("history updated");
     }
 }

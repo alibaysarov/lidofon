@@ -24,8 +24,6 @@ class UserUpdatedListener
      */
     public function handle(UserUpdatedEvent $event): void
     {
-        info("evt data", [$event->viewerId, $event->type]);
         $this->historyServiceImpl->addToHistory($event->viewerId, $event->type);
-        info("history updated add edit event");
     }
 }
