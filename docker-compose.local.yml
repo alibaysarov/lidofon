@@ -1,0 +1,63 @@
+version: "3.7"
+
+services:
+  php:
+    container_name: lidofon-app
+    depends_on:
+      - db
+    build:
+      args:
+        user: park_service
+        uid: 270124
+      context: ./
+      dockerfile: dockerfile
+    volumes:
+      - ./:/var/www/
+  db:
+    image: mysql:5.7
+    container_name: lidofon-db
+    restart: unless-stopped
+    ports:
+      - 3333:3306
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lidofon-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 8080:80
+
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: lidofon-nginx
+    restart: unless-stopped
+    depends_on:
+      - php
+    ports:
+      - 8000:80
+      - 443:443
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx/local:/etc/nginx/conf.d
+      - /etc/ssl:/etc/ssl
+  #        - ./docker-compose/nginx/remote/remote.conf:/etc/nginx/sites-enabled/remote.conf:rw
+  redis:
+    image: redis:alpine
+    container_name: lidofon-redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
