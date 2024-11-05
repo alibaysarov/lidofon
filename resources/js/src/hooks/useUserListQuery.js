@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
-
+import md5 from 'crypto-js/md5';
 function createQueryString(params) {
     if (typeof params !== 'object' || params === null) {
         return '';
@@ -19,8 +19,9 @@ function createQueryString(params) {
 }
 
 const useUserListQuery = (filters) => {
+    const hash = md5(createQueryString(filters)).toString();
     return useQuery({
-        queryKey: ['users', createQueryString(filters)],
+        queryKey: ['users', hash],
         queryFn: () => axios.get(`${import.meta.env.VITE_API_URL}/users/all/${createQueryString(filters)}`, {
             headers: {
                 'Content-Type': 'application/json',

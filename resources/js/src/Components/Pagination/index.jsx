@@ -54,7 +54,7 @@ const Pagination = ({ totalPages, onPageChange }) => {
 
         pages.push(
             <Button
-                key={totalPages}
+                key={totalPages+"last"}
                 onClick={() => changePage(totalPages)}
                 colorPalette={currentPage === totalPages ? 'blue' : 'gray'}
                 variant={currentPage === totalPages ? 'filled' : 'subtle'}

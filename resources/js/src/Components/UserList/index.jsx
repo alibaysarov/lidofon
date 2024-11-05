@@ -23,7 +23,7 @@ const UserList = () => {
         console.log(e.target.value)
         setFilter(prev => ({
             ...prev,
-            name: e.target.value,
+            name: e.target.value.replace(/\d/g, ""),
         }))
     }
     const changeNameOrder = (e) => {
@@ -63,7 +63,7 @@ const UserList = () => {
                 }
             </Flex>
             {
-                isSuccess && (
+                isSuccess && data.data.users.length >= 10 && (
                     <Flex mt={"40px"} justifyContent={"center"} alignItems={"center"}>
                         <Pagination totalPages={data.data.total_pages} onPageChange={changePageHandler}/>
                     </Flex>
